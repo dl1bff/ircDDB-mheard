@@ -1,0 +1,35 @@
+This program listens on an ethernet interface for ip packets
+originating from an RP2C DSTAR Repeater Controller.
+It reports its findings via UDP to this software:
+
+https://github.com/dl1bff/ircDDB-DV/blob/master/net/ircDDB/dv/RptrUDPReceiver.java
+
+
+The code uses a modified version of this file for calculation 
+of the Golay (23,12,7) error correction code:
+
+http://www.eccpage.com/golay23.c
+
+*** Because of its copyrights,
+*** ALL OF ircDDB-mheard CAN ONLY BE USED IN NON-COMMERCIAL APPLICATIONS!
+
+
+The code uses three files from "libbsd", version 0.2.0.
+http://libbsd.freedesktop.org/
+
+libutil.h
+pidfile.c
+flopen.c
+
+Please look at the source files and the file COPYING for copyrights.
+
+
+
+Typical usage (daemon mode):
+
+./ircDDB-mheard -i eth1 BCA 12347 "src host 172.16.0.1 and udp port 20000" /var/run/ircDDB-mheard.pid
+
+Analyze pcap files:
+
+./ircDDB-mheard -f trace.pcap BCA 12347 "src host 172.16.0.1 and udp port 20000"
+
