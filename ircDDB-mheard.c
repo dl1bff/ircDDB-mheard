@@ -184,10 +184,10 @@ static void process_module_heard( const u_char * data, int len )
   const struct dstar_module_heard * mh = (struct dstar_module_heard *) data;
 
 
-  if (mh->rpt1_callsign[7] == 'S')
-  {
-    return;
-  }
+  // if (mh->rpt1_callsign[7] == 'S')
+  // {
+  //   return;
+  // }
 
   int module = 0;
 
