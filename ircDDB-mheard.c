@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dstar_dv.h"
 
 
-#define SYSLOG_PROGRAM_NAME "ircDDB-mheard"
+#define SYSLOG_PROGRAM_NAME "ircddbmhd"
 
 struct dstar_header
 {
