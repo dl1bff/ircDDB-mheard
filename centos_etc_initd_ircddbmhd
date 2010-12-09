@@ -1,0 +1,90 @@
+#!/bin/sh
+
+# chkconfig: 2345 99 01
+# description: ircDDB mheard daemon
+# processname: ircddbmhd
+
+### BEGIN INIT INFO
+# Provides: ircddbmhd
+# Required-Start: $local_fs $network
+# Required-Stop: $local_fs $network
+# Should-Start:
+# Short-Description: ircDDB mheard daemon
+# Description: ircDDB mheard daemon
+### END INIT INFO
+
+#
+#
+# ircDDB-mheard
+#
+# Copyright (C) 2010   Michael Dirska, DL1BFF (dl1bff@mdx.de)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+
+PROG=ircddbmhd
+PIDFILE=/var/run/$PROG/$PROG.pid
+IRCDDBMHD_BIN=/usr/sbin/$PROG
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+[ -r /etc/default/$PROG ] && . /etc/default/$PROG
+
+RETVAL=0
+
+start()
+{
+	echo -n $"Starting $PROG: "
+	daemon --pidfile $PIDFILE $IRCDDBMHD_BIN $DAEMON_ARGS
+	RETVAL=$?
+	echo
+	[ $RETVAL = 0 ] && touch $PIDFILE
+	return $RETVAL
+}
+
+stop()
+{
+	echo -n $"Shutting down $PROG: "
+	killproc -p $PIDFILE $IRCDDBMHD_BIN
+	RETVAL=$?
+	echo
+	rm -f $PIDFILE
+	return $RETVAL
+}
+
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	status)
+		status -p $PIDFILE $IRCDDBMHD_BIN
+		;;
+	restart)
+		stop
+		start
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|restart|status}"
+		RETVAL=3
+esac
+
+exit $RETVAL
+

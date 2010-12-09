@@ -29,7 +29,7 @@ Summary: ircDDB-mheard daemon
 URL: http://ircddb.net
 Packager: Michael Dirska DL1BFF <dl1bff@mdx.de>
 Requires: libpcap >= 0.9
-Source0: dl1bff-ircDDB-mheard-v1.0-0-ge33056a.tar.gz
+Source0: dl1bff-ircDDB-mheard-v1.1-0-g1d85e4b.tar.gz
 BuildRoot: %{_tmppath}/%{name}-root
 BuildRequires: libpcap-devel
 
@@ -39,7 +39,7 @@ DSTAR controller and sends its findings to a local UDP port.
 
 
 %prep
-%setup -n dl1bff-ircDDB-mheard-e33056a
+%setup -n dl1bff-ircDDB-mheard-1d85e4b
 
 
 %build
@@ -52,6 +52,7 @@ mkdir -p %{buildroot}/%{_sbindir}
 mkdir -p %{buildroot}/etc/default
 cp ircDDB-mheard %{buildroot}/%{_sbindir}/%{name}
 cp etc_default_ircddbmhd %{buildroot}/etc/default/%{name}
+mkdir -p %{buildroot}/var/run/%{name}
 
 %clean
 rm -rf %{buildroot}
