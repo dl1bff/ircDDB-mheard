@@ -22,14 +22,14 @@
 
 Name: ircddbmhd
 Version: 1.1
-Release: 1
+Release: 2
 License: GPLv2
 Group: Networking/Daemons
 Summary: ircDDB-mheard daemon
 URL: http://ircddb.net
 Packager: Michael Dirska DL1BFF <dl1bff@mdx.de>
 Requires: libpcap >= 0.9
-Source0: dl1bff-ircDDB-mheard-v1.1-0-g1d85e4b.tar.gz
+Source0: dl1bff-ircDDB-mheard-v1.1-1-g2a92012.tar.gz
 BuildRoot: %{_tmppath}/%{name}-root
 BuildRequires: libpcap-devel
 
@@ -39,7 +39,7 @@ DSTAR controller and sends its findings to a local UDP port.
 
 
 %prep
-%setup -n dl1bff-ircDDB-mheard-1d85e4b
+%setup -n dl1bff-ircDDB-mheard-2a92012
 
 
 %build
@@ -53,6 +53,8 @@ mkdir -p %{buildroot}/etc/default
 cp ircDDB-mheard %{buildroot}/%{_sbindir}/%{name}
 cp etc_default_ircddbmhd %{buildroot}/etc/default/%{name}
 mkdir -p %{buildroot}/var/run/%{name}
+mkdir -p %{buildroot}/etc/init.d
+cp centos_etc_initd_ircddbmhd %{buildroot}/etc/init.d/%{name}
 
 %clean
 rm -rf %{buildroot}
@@ -61,7 +63,19 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root)
 %config /etc/default/%{name}
-%{_sbindir}/%{name}
+%attr(755,root,root) %{_sbindir}/%{name}
 %dir /var/run/%{name}
-%doc README COPYING
+%attr(755,root,root) /etc/init.d/%{name}
+%doc README COPYING LICENSE
+
+
+%preun
+/sbin/service %{name} stop
+/sbin/chkconfig --del %{name}
+
+
+%post
+/sbin/chkconfig --add %{name}
+
+
 
