@@ -21,7 +21,7 @@
 
 
 Name: ircddbmhd
-Version: 1.1
+Version: 1.2
 Release: 2
 License: GPLv2
 Group: Networking/Daemons
@@ -29,7 +29,7 @@ Summary: ircDDB-mheard daemon
 URL: http://ircddb.net
 Packager: Michael Dirska DL1BFF <dl1bff@mdx.de>
 Requires: libpcap >= 0.9
-Source0: dl1bff-ircDDB-mheard-v1.1-1-g2a92012.tar.gz
+Source0: dl1bff-ircDDB-mheard-v1.2-0-g50b2ef4.tar.gz
 BuildRoot: %{_tmppath}/%{name}-root
 BuildRequires: libpcap-devel
 
@@ -39,7 +39,7 @@ DSTAR controller and sends its findings to a local UDP port.
 
 
 %prep
-%setup -n dl1bff-ircDDB-mheard-2a92012
+%setup -n dl1bff-ircDDB-mheard-50b2ef4
 
 
 %build
