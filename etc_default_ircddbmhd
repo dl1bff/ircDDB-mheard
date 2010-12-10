@@ -21,9 +21,30 @@
 # -------------------
 # if you want to use a different udp port number, please changed it here
 # and then update the ircDDB config files by executing
-# /usr/lib/ircddbmhd/update-ircddb-config.sh
+# /usr/sbin/ircddbconfig  (provided by the package ircddbconfig)
 MHEARD_UDP_PORT=12347
 # -------------------
 
-DAEMON_ARGS="-i eth1 BCA $MHEARD_UDP_PORT 'src host 172.16.0.1 and udp port 20000' $PIDFILE"
+# -------------------
+# if you want to use a different udp port number and ip address for
+# your RP2C, please changed it in the file
+# /opt/products/dstar/dstar_gw/dsgwd/dsgwd.conf
+# and then update this config file by executing
+# /usr/sbin/ircddbconfig  (provided by the package ircddbconfig)
+ZR_ADDR=172.16.0.1
+ZR_PORT=20000
+# -------------------
+
+# this is the ethernet interface, where the RP2C is connected
+CAPTURE_INTERFACE=eth1
+
+# these are the DV module letters of the RP2C ports 2 to 4
+PORT_ASSIGNMENT=BCA
+#  PORT 1:  (reserved for DD module)
+#  PORT 2: letter  'B'   DV module 4xx MHz
+#  PORT 3: letter  'C'   DV module 14x MHz
+#  PORT 4: letter  'A'	 DV module 12xx MHz
+
+
+DAEMON_ARGS="-i $CAPTURE_INTERFACE $PORT_ASSIGNMENT $MHEARD_UDP_PORT 'src host $ZR_ADDR and udp port $ZR_PORT' $PIDFILE"
 
