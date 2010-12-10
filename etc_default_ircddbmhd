@@ -18,6 +18,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# -------------------
+# if you want to use a different udp port number, please changed it here
+# and then update the ircDDB config files by executing
+# /usr/lib/ircddbmhd/update-ircddb-config.sh
+MHEARD_UDP_PORT=12347
+# -------------------
 
-DAEMON_ARGS="-i eth1 BCA 12347 'src host 172.16.0.1 and udp port 20000' $PIDFILE"
+DAEMON_ARGS="-i eth1 BCA $MHEARD_UDP_PORT 'src host 172.16.0.1 and udp port 20000' $PIDFILE"
 
