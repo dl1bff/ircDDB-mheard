@@ -726,6 +726,8 @@ int main(int argc, char *argv[])
 
   syslog(LOG_INFO, "start");
 
+  int count = 0;
+
   while(1)
   {
     fd_set rfds;
@@ -749,7 +751,16 @@ int main(int argc, char *argv[])
     if (retval == 0)
     {
       flush_mheard_data();
+      count = 0;
       continue;
+    }
+
+    count ++;
+
+    if (count > 10)
+    {
+      flush_mheard_data();
+      count = 0;
     }
 
     int res = pcap_next_ex( handle, &header, &packet);
