@@ -128,6 +128,8 @@ static int udp_socket;
 
 const char * module_letters;
 
+const char dtmf_chars[16] = "147*2580369#ABCD";
+
 
 static void flush_mheard_data_module(int i)
 {
@@ -377,6 +379,13 @@ static void process_dv_data ( const u_char * data, int len )
       {
 	si->dstar_dv_silent ++;
       }
+
+      if ((data[0] & 0x0ffc) == 0xfc0) // DTMF tone
+      {
+	int dtmf = (data[0] & 0x03) | ((data[2] & 0x60) >> 3);
+	syslog(LOG_INFO, "DTMF '%c'", dtmf_chars[dtmf] );
+      }
+
 
       si->dstar_dv_errs += errs;
       si->stream_counter ++ ;
