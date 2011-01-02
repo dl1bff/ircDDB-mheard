@@ -115,6 +115,7 @@ struct dstar_stream_info
 
 static struct dstar_mheard_info mheard_info[MAX_MODULE_ID];
 static struct dstar_stream_info stream_info[MAX_MODULE_ID];
+static char autolearn_letters[MAX_MODULE_ID];
 
 /* time to wait for tx msg:  MHEARD_INFO_TIMER * SELECT_TIMEOUT */
 #define MHEARD_INFO_TIMEOUT 10
@@ -190,16 +191,28 @@ static void process_module_heard( const u_char * data, int len )
   // }
 
   int module = 0;
+  int found = 0;
 
   int i;
 
   for (i=0; i < 3; i++)
   {
-    if (module_letters[i] == mh->rpt1_callsign[7])  // try to find out the module number
+    if (module_letters[i] == mh->rpt1_callsign[7])
     {
-      module = i+1;
-
+      found = 1;
       break;
+    }
+  }
+
+  if (found)
+  {
+    for (i=0; i < MAX_MODULE_ID; i++)
+    {
+      if (autolearn_letters[i] == mh->rpt1_callsign[7])
+      {
+	module = i;
+	break;
+      }
     }
   }
 
@@ -243,7 +256,7 @@ static void process_dv_data ( const u_char * data, int len )
 
   u_short dv_stream_id = ntohs(dh->dv_stream_id);
 
-  if ((dh->dv_module >= MAX_MODULE_ID) || (dh->dv_module == 0))
+  if (dh->dv_module >= MAX_MODULE_ID)
   {
     return;
   }
@@ -294,6 +307,24 @@ static void process_dv_data ( const u_char * data, int len )
 
       si->mheard_info_timer = MHEARD_INFO_TIMEOUT;
       si->mheard_info_valid = 1;
+
+      int found = 0;
+      int i;
+
+      for (i=0; i < 3; i++)
+      {
+	if (module_letters[i] == rh->rpt1_callsign[7])
+	{
+	  found = 1;
+	  break;
+	}
+      }
+
+      if (found)
+      {
+	autolearn_letters[ dh->dv_module ] = rh->rpt1_callsign[7];
+      }
+
     }
     else
     {
@@ -317,7 +348,7 @@ static void process_dv_data ( const u_char * data, int len )
       {
 	char buf[20];
 	int percent_silent = (si->dstar_dv_silent * 100) / si->stream_counter;
-	int permille_ber = (si->dstar_dv_errs * 125) / (si->stream_counter * 3);
+	int permille_ber = (si->dstar_dv_errs * 125) / (si->stream_counter * 6);
 	sprintf (buf, "%04x%02x%02x", si->stream_counter, percent_silent,
 	  permille_ber);
 	if (strlen(buf) == 8)
@@ -339,10 +370,10 @@ static void process_dv_data ( const u_char * data, int len )
 
       const struct dstar_dv_data * dd = (struct dstar_dv_data *) d;
 
-      int errs;
-      int data = dstar_dv_decode_first_block( dd->dv_voice, &errs );
+      int data[3];
+      int errs = dstar_dv_decode( dd->dv_voice, data );
 
-      if (data == 0xf85) // silence frame
+      if (data[0] == 0xf85) // silence frame
       {
 	si->dstar_dv_silent ++;
       }
@@ -621,7 +652,7 @@ int main(int argc, char *argv[])
 
   if (strlen(module_letters) != 3)
   {
-    fprintf(stderr, "module_letters string must have 3 characters; default: 'BCA'\n");
+    fprintf(stderr, "module_letters string must have 3 characters; default: 'ABC'\n");
     usage(argv[0]);
     return 2;
   }
@@ -723,6 +754,12 @@ int main(int argc, char *argv[])
   }
 
   dstar_dv_init();
+
+  int i;
+  for (i=0; i < MAX_MODULE_ID; i++)
+  {
+    autolearn_letters[i] = ' ';
+  }
 
   syslog(LOG_INFO, "start");
 

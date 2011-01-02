@@ -96,6 +96,36 @@ int bit_pos2[] =
 
 static long decoding_table[2048];
 
+static int prng[4096];
+
+static void init_prng(void)
+{
+  int i;
+
+  for (i=0; i < 4096; i++)
+  {
+    int mask = 0x800000;
+    int j;
+    int pr;
+
+    prng[i] = 0;
+    pr = i << 4;
+
+    for (j=0; j < 24; j++)
+    {
+      pr = ((173 * pr) + 13849) & 0xFFFF;
+
+      if ((pr & 0x8000) != 0)
+      {
+	prng[i] |= mask;
+      }
+
+      mask = mask >> 1;
+    }
+  }
+
+}
+
 void dstar_dv_init(void)
 {
   long temp;
@@ -133,16 +163,17 @@ void dstar_dv_init(void)
     temp = arr2int(a,3);
     decoding_table[get_syndrome(temp)] = temp;
   } 
+
+  init_prng();
 }
 
 
-static int golay2412 (long data, int * decoded)
+static int golay2412 (int data, int * decoded)
 {
   int block = (data >> 1) & 0x07fffff;
   int corrected_block = block ^ decoding_table[get_syndrome(block)];
 
   int errs = 0;   
-  int parity_rcvd = 0;
   int parity_corr = 0;
   int i;
 
@@ -152,11 +183,6 @@ static int golay2412 (long data, int * decoded)
     
     int bit_rcvd = block & mask;
     int bit_corr = corrected_block & mask;
-    
-    if (bit_rcvd != 0)
-    {
-      parity_rcvd ++;
-    }
     
     if (bit_corr != 0)
     {
@@ -169,19 +195,9 @@ static int golay2412 (long data, int * decoded)
     }
   }
   
-  if ((parity_corr & 0x01) != 0)
+  if ((parity_corr & 0x01) != (data & 0x01))
   {
-    if ((data & 1) == 0)
-    {
       errs ++;
-    }
-  }
-  else
-  {
-    if ((data & 1) != 0)
-    {
-      errs ++;
-    }
   }
 
   *decoded = corrected_block >> 11;
@@ -192,7 +208,7 @@ static int golay2412 (long data, int * decoded)
 
 int dstar_dv_decode_first_block (const unsigned char * d, int * errs)
 {
-  long bits[3];
+  int bits[3];
   int i;
   int data;
 
@@ -209,6 +225,33 @@ int dstar_dv_decode_first_block (const unsigned char * d, int * errs)
   *errs = golay2412( bits[0], & data );
 
   return data;
+}
+
+
+
+int dstar_dv_decode (const unsigned char * d, int data[3])
+{
+  int bits[3];
+  int i;
+  int errs;
+
+  for (i=0; i < 3; i++)
+  {
+    bits[i] = 0;
+  }
+
+  for (i=0; i < 72; i++)
+  {
+    bits[ bit_pos1[i] ] |= (d[ i >> 3 ] & (0x80 >> (i & 0x07))) ? (1 << bit_pos2[i]) : 0;
+  }
+
+  errs = golay2412( bits[0], data );
+
+  errs += golay2412( bits[1] ^ prng[ data[0] & 0x0fff ], data + 1 );
+
+  data[2] = bits[2];
+
+  return errs;
 }
 
 

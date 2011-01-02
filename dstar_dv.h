@@ -35,3 +35,17 @@ void dstar_dv_init(void);
 
 int dstar_dv_decode_first_block (const unsigned char * d, int * errs);
 
+/* This function decodes the both Golay blocks
+   of a DSTAR Digital Voice frame. The function is provided with a
+   pointer to the 9-byte voice data. Function result is
+   the number of decoding errors (0 to 8). Only 48 bits are
+   checked, the BER therefore is:  BER = errs / 48
+   
+   The return value data[0] contains the first decoded golay block
+   (12 bits).  The return value data[1] contains the second decoded
+   golay block (12 bits). The return value data[2] contains the
+   unprotected rest of the frame (24 bits).
+   */
+
+int dstar_dv_decode (const unsigned char * d, int data[3]);
+

@@ -38,13 +38,11 @@ ZR_PORT=20000
 # this is the ethernet interface, where the RP2C is connected
 CAPTURE_INTERFACE=eth1
 
-# these are the DV module letters of the RP2C ports 2 to 4
-PORT_ASSIGNMENT=BCA
-#  PORT 1:  (reserved for DD module)
-#  PORT 2: letter  'B'   DV module 4xx MHz
-#  PORT 3: letter  'C'   DV module 14x MHz
-#  PORT 4: letter  'A'	 DV module 12xx MHz
+# these are the DV module letters of the RP2C
+PORT_ID=ABC
+#  letter  'A'   DV module 12xx MHz
+#  letter  'B'   DV module 4xx MHz
+#  letter  'C'   DV module 14x MHz
 
-
-DAEMON_ARGS="-i $CAPTURE_INTERFACE $PORT_ASSIGNMENT $MHEARD_UDP_PORT 'src host $ZR_ADDR and udp port $ZR_PORT' $PIDFILE"
+DAEMON_ARGS="-i $CAPTURE_INTERFACE $PORT_ID $MHEARD_UDP_PORT 'src host $ZR_ADDR and udp port $ZR_PORT' $PIDFILE"
 

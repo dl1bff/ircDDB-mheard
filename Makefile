@@ -53,5 +53,6 @@ rpm:
 	rpmbuild -ba ircddbmhd.spec
 	createrepo i386
 
+test_dv: test_dv.o dstar_dv.o golay23.o
 
 
