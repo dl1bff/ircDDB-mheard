@@ -2,7 +2,7 @@
 # 
 # ircDDB-mheard
 # 
-# Copyright (C) 2010   Michael Dirska, DL1BFF (dl1bff@mdx.de)
+# Copyright (C) 2011   Michael Dirska, DL1BFF (dl1bff@mdx.de)
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,19 +27,22 @@ LDLIBS=-lpcap
 all: ircDDB-mheard
 
 
-pidfile.c: libutil.h
+pidfile.o: libutil.h
 
-flopen.c: libutil.h
+flopen.o: libutil.h
 
-ircDDB-mheard.c: libutil.h
+ircDDB-mheard.o: libutil.h ircddbmhd_version.h
 
-dstar_dv.c: dstar_dv.h golay23.h
+dstar_dv.o: dstar_dv.h golay23.h
 
-golay23.c: golay23.h
+golay23.o: golay23.h
 
 
 ircDDB-mheard: ircDDB-mheard.o pidfile.o flopen.o dstar_dv.o golay23.o
 
+
+ircddbmhd_version.h:
+	touch ircddbmhd_version.h
 
 
 

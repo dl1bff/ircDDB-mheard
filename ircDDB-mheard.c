@@ -2,7 +2,7 @@
 
 ircDDB-mheard
 
-Copyright (C) 2010   Michael Dirska, DL1BFF (dl1bff@mdx.de)
+Copyright (C) 2011   Michael Dirska, DL1BFF (dl1bff@mdx.de)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,6 +38,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "libutil.h"
 
 #include "dstar_dv.h"
+
+#include "ircddbmhd_version.h"
+
+#if !defined(IRCDDBMHD_VERSION)
+#define IRCDDBMHD_VERSION "debug-version"
+#endif
 
 
 #define SYSLOG_PROGRAM_NAME "ircddbmhd"
@@ -588,8 +594,10 @@ static void process_packet ( const u_char * packet, int len )
 
 static void usage(const char * a)
 {
-  fprintf (stderr, "Usage: %s -f <pcap-file> <module letters> <udp port> <pcap rules>\n"
-	"Usage: %s -i <ethX> <module letters> <udp port> <pcap rules> [<pid file>]\n", a, a);
+  fprintf (stderr, SYSLOG_PROGRAM_NAME " version '%s'\n"
+	"Usage: %s -f <pcap-file> <module letters> <udp port> <pcap rules>\n"
+	"Usage: %s -i <ethX> <module letters> <udp port> <pcap rules> [<pid file>]\n",
+	  IRCDDBMHD_VERSION, a, a);
 }
 
 
@@ -770,9 +778,20 @@ int main(int argc, char *argv[])
     autolearn_letters[i] = ' ';
   }
 
-  syslog(LOG_INFO, "start");
+  char versioninfo[20];
+
+  memset (versioninfo, ' ', sizeof versioninfo);
+  i = strlen( IRCDDBMHD_VERSION );
+  if (i > (sizeof versioninfo))
+  {
+    i = sizeof versioninfo;
+  }
+  memcpy (versioninfo, IRCDDBMHD_VERSION, i);
+
+  syslog(LOG_INFO, SYSLOG_PROGRAM_NAME " version '%s'",  IRCDDBMHD_VERSION);
 
   int count = 0;
+  int watchdogCounter = 0;
 
   while(1)
   {
@@ -798,6 +817,13 @@ int main(int argc, char *argv[])
     {
       flush_mheard_data();
       count = 0;
+
+      watchdogCounter ++;
+      if (watchdogCounter > 9000) // every 15 minutes
+      {
+	watchdogCounter = 0;
+	send( udp_socket, versioninfo, sizeof versioninfo, 0);
+      }
       continue;
     }
 
