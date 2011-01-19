@@ -49,8 +49,8 @@ ircddbmhd_version.h:
 clean:
 	rm -f *.o
 
-dist-clean: clean
-	rm -f ircDDB-mheard
+distclean: clean
+	rm -f ircDDB-mheard ircddbmhd_version.h
 
 rpm:
 	rpmbuild -ba ircddbmhd.spec
@@ -58,4 +58,8 @@ rpm:
 
 test_dv: test_dv.o dstar_dv.o golay23.o
 
+
+install: ircDDB-mheard
+	install ircDDB-mheard $(DESTDIR)/usr/sbin/ircddbmhd
+	install -d $(DESTDIR)/var/run/ircddbmhd
 

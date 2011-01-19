@@ -1,0 +1,15 @@
+Source: ircddbmhd
+Section: hamradio
+Priority: extra
+Maintainer: Michael Dirska <dl1bff@mdx.de>
+Build-Depends: debhelper (>= 7), libpcap-dev
+Standards-Version: 3.7.3
+Homepage: http://ircDDB.net
+
+Package: ircddbmhd
+Architecture: any
+Depends: libc6, libpcap0.8
+Description: ircddbmhd - RP2C packet capture
+ The ircddbmhd daemon captures IP packets from an RP2C
+ DSTAR controller and sends its findings to a local UDP port.
+

@@ -1,0 +1,48 @@
+#
+#
+# ircDDB-mheard
+#
+# Copyright (C) 2011   Michael Dirska, DL1BFF (dl1bff@mdx.de)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# -------------------
+# if you want to use a different udp port number, please changed it here
+# and then update the ircDDB config files by executing
+# /usr/sbin/ircddbconfig  (provided by the package ircddbconfig)
+MHEARD_UDP_PORT=12347
+# -------------------
+
+# -------------------
+# if you want to use a different udp port number and ip address for
+# your RP2C, please changed it in the file
+# /opt/products/dstar/dstar_gw/dsgwd/dsgwd.conf
+# and then update this config file by executing
+# /usr/sbin/ircddbconfig  (provided by the package ircddbconfig)
+ZR_ADDR=172.16.0.1
+ZR_PORT=20000
+# -------------------
+
+# this is the ethernet interface, where the RP2C is connected
+CAPTURE_INTERFACE=eth1
+
+# these are the DV module letters of the RP2C
+PORT_ID=ABC
+#  letter  'A'   DV module 12xx MHz
+#  letter  'B'   DV module 4xx MHz
+#  letter  'C'   DV module 14x MHz
+
+DAEMON_ARGS="-i $CAPTURE_INTERFACE $PORT_ID $MHEARD_UDP_PORT 'src host $ZR_ADDR and udp port $ZR_PORT' $PIDFILE"
+
