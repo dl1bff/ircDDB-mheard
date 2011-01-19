@@ -21,15 +21,15 @@
 
 
 Name: ircddbmhd
-Version: 1.2
-Release: 2
+Version: 1.3
+Release: 8
 License: GPLv2
 Group: Networking/Daemons
 Summary: ircDDB-mheard daemon
 URL: http://ircddb.net
 Packager: Michael Dirska DL1BFF <dl1bff@mdx.de>
 Requires: libpcap >= 0.9
-Source0: dl1bff-ircDDB-mheard-v1.2-0-g50b2ef4.tar.gz
+Source0: dl1bff-ircDDB-mheard-v1.3-1-g78238bb.tar.gz
 BuildRoot: %{_tmppath}/%{name}-root
 BuildRequires: libpcap-devel
 
@@ -39,7 +39,9 @@ DSTAR controller and sends its findings to a local UDP port.
 
 
 %prep
-%setup -n dl1bff-ircDDB-mheard-50b2ef4
+%setup -n dl1bff-ircDDB-mheard-78238bb
+echo "#define IRCDDBMHD_VERSION \"rpm:%{name}-%{version}-%{release}\"" > ircddbmhd_version.h
+
 
 
 %build
@@ -68,14 +70,27 @@ rm -rf %{buildroot}
 %attr(755,root,root) /etc/init.d/%{name}
 %doc README COPYING LICENSE
 
+%pre
+if [ $1 -eq 2 ]; then
+  /sbin/service %{name} stop
+  /bin/sleep 2
+fi
+
 
 %preun
-/sbin/service %{name} stop
-/sbin/chkconfig --del %{name}
+if [ $1 -eq 0 ]; then
+  /sbin/service %{name} stop
+  /sbin/chkconfig --del %{name}
+fi
 
 
 %post
-/sbin/chkconfig --add %{name}
+if [ $1 -eq 1 ]; then
+  /sbin/chkconfig --add %{name}
+fi
+if [ $1 -eq 2 ]; then
+  /sbin/service %{name} start
+fi
 
 
 
