@@ -53,7 +53,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}/%{_sbindir}
 mkdir -p %{buildroot}/etc/default
 cp ircDDB-mheard %{buildroot}/%{_sbindir}/%{name}
-cp etc_default_ircddbmhd %{buildroot}/etc/default/%{name}
+cp debian/ircddbmhd.default %{buildroot}/etc/default/%{name}
 mkdir -p %{buildroot}/var/run/%{name}
 mkdir -p %{buildroot}/etc/init.d
 cp centos_etc_initd_ircddbmhd %{buildroot}/etc/init.d/%{name}
